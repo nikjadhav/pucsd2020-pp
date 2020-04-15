@@ -1,0 +1,20 @@
+label {
+    width: 200px;
+    display: inline-block;
+    text-align: left;
+    margin :10px 10px 10px 10px;
+ }
+ button{
+     margin-left: 50px;
+     margin-top: 10px;
+ }
+ .registration_form {
+     margin-top: 30px;
+ }
+ .error-message {
+    color: red;
+  }
+  input.ng-touched.ng-invalid {
+    border: 1px solid red;
+  }
+  

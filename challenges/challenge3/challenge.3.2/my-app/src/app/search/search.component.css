@@ -1,0 +1,49 @@
+.search_div{
+    margin: auto;
+    width: 60%;
+    margin-left: 500px;
+
+}
+.search_header{
+
+    margin-left:90px;
+
+}
+.search_id label{
+margin: 20px;
+
+}
+.search_id{
+    margin-bottom: 20px;
+
+}
+.search_button{
+    margin-left:60px;
+}
+.search_button button{
+   margin:10px 10px 10px 10px; 
+}
+.table_class {
+    margin-top:100px;
+}
+/* update form*/
+.update_class label {
+    width: 200px;
+    display: inline-block;
+    text-align: left;
+    margin :10px 10px 10px 10px;
+ }
+ button{
+     margin-left: 50px;
+     margin-top: 10px;
+ }
+ .registration_form {
+     margin-top: 30px;
+ }
+ .error-message {
+    color: red;
+  }
+  input.ng-touched.ng-invalid {
+    border: 1px solid red;
+  }
+  

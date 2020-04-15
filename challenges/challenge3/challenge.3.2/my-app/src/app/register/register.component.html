@@ -1,0 +1,68 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <div align="center">
+    <h3>REGISTRATION FORM</h3>   
+  </div>
+  <div align="center" class="registration_form">
+  <div>
+      <label for="firstname">First Name</label>
+      <input formControlName="fname" type="text" name="fname" id="fname">
+  </div>
+  <div class="error-messages">
+    <ng-container *ngFor="let error of error_messages.fname">
+      <div class="error-message" *ngIf="registerForm.get('fname').hasError(error.type) && (registerForm.get('fname').dirty || registerForm.get('fname').touched)">
+        {{ error.message }}
+      </div>
+    </ng-container>
+  </div>
+  <div>
+    <label for="lastname">Last Name</label>
+    <input formControlName="lname" type="text" name="lname" id="lname">
+  </div>
+ <div class="error-messages">
+  <ng-container *ngFor="let error of error_messages.lname">
+    <div class="error-message" *ngIf="registerForm.get('lname').hasError(error.type) && (registerForm.get('lname').dirty || registerForm.get('lname').touched)">
+      {{ error.message }}
+    </div>
+  </ng-container>
+ </div>
+  <div>
+    <label for="email">Email</label>
+    <input formControlName="email" type="text" name="email" id="email">
+  </div>
+  <div calss="error-messages">
+    <ng-container *ngFor="let error of error_messages.email">
+      <div class="error-message" *ngIf="registerForm.get('email').hasError(error.type) && 
+(registerForm.get('email').dirty || registerForm.get('email').touched)">
+        {{ error.message }}
+      </div>
+    </ng-container>
+  </div>
+  <div>
+    <label for="contact">Contact</label>
+    <input formControlName="contact" type="text" name="contact" id="contact">
+    <div calss="error-messages">
+      <ng-container *ngFor="let error of error_messages.contact">
+        <div class="error-message" *ngIf="registerForm.get('contact').hasError(error.type) && 
+  (registerForm.get('contact').dirty || registerForm.get('contact').touched)">
+          {{ error.message }}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div>
+    <label for="password">Password</label>
+    <input formControlName="pass" type="password" name="pass" id="pass">
+  </div>
+  <div class="error-messages">
+    <ng-container *ngFor="let error of error_messages.pass">
+      <div class="error-message" *ngIf="registerForm.get('pass').hasError(error.type) && (registerForm.get('pass').dirty || registerForm.get('pass').touched)">
+        {{ error.message }}
+      </div>
+    </ng-container>
+  </div>  
+  <div>
+    <button  type="submit" class="btn btn-primary" value="submit" [disabled]="!registerForm.valid">Register</button>
+  </div>
+  </div>
+</form>

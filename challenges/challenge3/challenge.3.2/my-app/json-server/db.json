@@ -1,0 +1,28 @@
+{
+  "user": [
+    {
+      "fname": "santa",
+      "lname": "graham",
+      "email": "sg@gmail.com",
+      "contact": "9911001100",
+      "pass": "1234",
+      "id": 1
+    },
+    {
+      "fname": "smith",
+      "lname": "john",
+      "email": "sm@gmail.com",
+      "contact": "9988001122",
+      "pass": "1234",
+      "id": 2
+    },
+    {
+      "fname": "johnson",
+      "lname": "smith",
+      "email": "jm@gmail.com",
+      "contact": "9988112211",
+      "pass": "12345",
+      "id": 3
+    }
+  ]
+}

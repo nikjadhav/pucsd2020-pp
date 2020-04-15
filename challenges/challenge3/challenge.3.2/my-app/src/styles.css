@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+.custom-toast .ui-toast {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+  }
+  
+
+  .custom-toast .ui-toast-message-content {
+    font-family: 'Courier New', Courier, monospace;
+    background: #FFD07B;
+  }
