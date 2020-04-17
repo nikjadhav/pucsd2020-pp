@@ -37,20 +37,20 @@
             </th>
         </tr>
         <tr *ngFor="let usr of users">
-            <td #id1 id="{{usr.id}}">
-                {{usr.id}}
+            <td #id1 id="{{usr.data.id}}">
+                {{usr.data.id}}
             </td>
             <td>
-                {{usr.fname}}
+                {{usr.data.first_name}}
             </td>
             <td>
-                {{usr.lname}}
+                {{usr.data.last_name}}
             </td>
             <td>
-                {{usr.email}}
+                {{usr.data.email}}
             </td>
             <td>
-                {{usr.contact}}
+                {{usr.data.contact_number}}
             </td>
             <td>
                 <button class="btn btn-primary" value="submit" (click)="update_display_setting()">Update</button>

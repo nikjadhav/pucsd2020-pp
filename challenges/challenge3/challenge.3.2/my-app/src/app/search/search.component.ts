@@ -40,19 +40,24 @@ Search(){
        (data:any[])=>
        {
          
-        console.log(data);
+        console.log("Data",data);
         var stringData = '[' + JSON.stringify(data) + ']'
-        var parseData = JSON.parse(stringData)
-        this.users = parseData;     
+        var parseData = JSON.parse(stringData);
+        console.log("parse",parseData[0][0]);
+        this.users = parseData;
+        console.log("In",this.users);     
        },
        (err:any[]) =>
        {
 
        }
+       
       
      )
+     console.log("usr",this.users);
      this.userservice.set_display_search(false);
     }
+   
     Delete(id){
       this.toastr.success("DELETE user successfully","TITLE");
       this.userservice.del_user(id).subscribe
@@ -74,9 +79,8 @@ Search(){
 
      
   Update(){
-    console.log("id",this.Id)
     let update_data={
-      "fname":this.fname,"lname":this.lname,"email":this.email,"contact":this.contact,"pass":this.pass
+      "first_name":this.fname,"last_name":this.lname,"email":this.email,"contact_number":this.contact,"password":this.pass
     }
     this.userservice.update_user(this.Id,update_data).subscribe
     (
@@ -102,11 +106,11 @@ Search(){
      this.userservice.set_display_search(true);
      this.userservice.set_display_update(false);
      /*setting up already filled values*/
-     this.fname=this.users[0].fname;
-     this.lname=this.users[0].lname;
-     this.email=this.users[0].email;
-     this.pass=this.users[0].pass;
-     this.contact=this.users[0].contact;
+     this.fname=this.users[0].data.first_name;
+     this.lname=this.users[0].data.last_name;
+     this.email=this.users[0].data.email;
+     this.pass=this.users[0].data.password;
+     this.contact=this.users[0].data.contact_number;
   
    }
    is_display_update(){

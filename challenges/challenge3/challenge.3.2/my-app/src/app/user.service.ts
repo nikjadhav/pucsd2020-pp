@@ -11,25 +11,32 @@ export class UserService {
   is_display_update=true;/*if true then dont show update form else show*/
   constructor(
     private httpClient: HttpClient
-  ) { }
+  ) { 
+  }
+  /*allow external api request and response*/
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json','Access-Control-Allow-Origin': '*'
 
+    })
+}
  
-  private SERVER = "http://localhost:3000/user";
+  private SERVER = "/api/webapi/v1/user";
 /*api functions*/
   get_userbyid(id){
   return  this.httpClient.get(this.SERVER+'/'+id);
   }
 
   post_data(userdata){
-    return  this.httpClient.post(this.SERVER+'/',userdata);
+    return  this.httpClient.post(this.SERVER,userdata,this.httpOptions);
   }
   del_user(id){
     console.log("service",id);
-    return this.httpClient.delete(this.SERVER+'/'+id);
+    return this.httpClient.delete(this.SERVER+'/'+id,this.httpOptions);
 
   }
   update_user(id,userdata){
-    return  this.httpClient.put(this.SERVER+'/'+id,userdata);
+    return  this.httpClient.put(this.SERVER+'/'+id,userdata,this.httpOptions);
   }
   /*helper functions for interaction between two components */
 

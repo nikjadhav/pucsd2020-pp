@@ -11,11 +11,11 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class RegisterComponent implements OnInit {
   error_messages = {
-    'fname': [
+    'first_name': [
       { type: 'required', message: 'First Name is required.' },
     ],
 
-    'lname': [
+    'last_name': [
       { type: 'required', message: 'Last Name is required.' }
     ],
 
@@ -26,23 +26,23 @@ export class RegisterComponent implements OnInit {
       { type: 'pattern', message: 'please enter a valid email address.' }
     ],
 
-    'pass': [
+    'password': [
       { type: 'required', message: 'password is required.' },
       { type: 'minlength', message: 'password length.' },
       { type: 'maxlength', message: 'password length.' }
     ],
-    'contact':[
+    'contact_number':[
       {type:'required',message:'contact is required'},
       {type:'pattern',message:'invalid number'},
     ],
   }
 
   registerForm: FormGroup;
-  fname = new FormControl('', [Validators.required, Validators.maxLength(30)]);
-  lname = new FormControl('', [Validators.required, Validators.maxLength(30)]);
+  first_name = new FormControl('', [Validators.required, Validators.maxLength(30)]);
+  last_name = new FormControl('', [Validators.required, Validators.maxLength(30)]);
   email = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(40),Validators.pattern(new RegExp("^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"))]);
-  contact = new FormControl('', [Validators.required, Validators.pattern(new RegExp("[0-9 ]{10}"))])
-  pass = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(16)]);
+  contact_number = new FormControl('', [Validators.required, Validators.pattern(new RegExp("[0-9 ]{10}"))])
+  password = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(16)]);
 
   constructor(
     private formBuilder:FormBuilder,  
@@ -62,13 +62,14 @@ export class RegisterComponent implements OnInit {
 
     let userData = {
      
-      "fname": this.registerForm.value.fname,
-      "lname": this.registerForm.value.lname,
+      "first_name": this.registerForm.value.first_name,
+      "last_name": this.registerForm.value.last_name,
       "email": this.registerForm.value.email,
-      "contact": this.registerForm.value.contact,
-      "pass": this.registerForm.value.pass,
+      "contact_number": this.registerForm.value.contact_number,
+      "password": this.registerForm.value.password,
       
     };
+    console.log(userData);
     if(this.registerForm.valid){
       console.log("valid");
       this.userservice.post_data(userData).subscribe
@@ -93,11 +94,11 @@ export class RegisterComponent implements OnInit {
 
   createFormValidations() {
     this.registerForm = this.formBuilder.group({
-      fname: this.fname,
-      lname: this.lname,
+      first_name: this.first_name,
+      last_name: this.last_name,
       email: this.email,
-      contact: this.contact,
-      pass: this.pass,
+      contact_number: this.contact_number,
+      password: this.password,
       
     }, 
     );

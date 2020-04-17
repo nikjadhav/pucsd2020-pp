@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SearchComponent } from './search/search.component';
 import { UserService} from './user.service';
+import { environment } from './../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +12,11 @@ export class AppComponent  {
   constructor(
     private userservice:UserService,
   )
-  {}
-  title = 'my-app';
+  {
+    console.log(environment.production); // Logs false for default environment
+  }
+  title = 'Rest-Api';
+
   change_class(){
     
     this.userservice.get_display_search();
