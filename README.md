@@ -1,11 +1,11 @@
 # pucsd2020-pp
 
 ### Assignment-1
-	* Calculator
+	Calculator
 ### Assignment-2
-	* Resume
+	Resume
 ### Challenges
-	* challenge1
-	* challenge2
-	* challenge3
-	* night challenge
+	challenge1
+	challenge2
+	challenge3
+	night challenge
