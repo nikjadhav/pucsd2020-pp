@@ -3,9 +3,10 @@ package user
 import (
 	"context"
 	"database/sql"
+	//"fmt"
 
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/driver"
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/model"
+	"github.com/pucsd2020-pp/ACL/backend/driver"
+	"github.com/pucsd2020-pp/ACL/backend/model"
 )
 
 type userRepository struct {
@@ -39,12 +40,24 @@ func (user *userRepository) Update(cntx context.Context, obj interface{}) (inter
 	return obj, err
 }
 
-func (user *userRepository) Delete(cntx context.Context, id int64) error {
+func (user *userRepository) Delete(cntx context.Context, id int64) (interface {},error){
 	obj := &model.User{Id: id}
-	return driver.SoftDeleteById(user.conn, obj, id)
+	return driver.DeleteById(user.conn, obj, id)
 }
 
-func (user *userRepository) GetAll(cntx context.Context) ([]interface{}, error) {
+func (user *userRepository) GetAll(cntx context.Context) ([]interface{}, error){ 
 	obj := &model.User{}
 	return driver.GetAll(user.conn, obj, 0, 0)
 }
+
+
+func (user *userRepository) IsValidUser(cntx context.Context, obj interface{}) (interface{}, error) {
+
+	usr := obj.(model.Login)
+	result, err := driver.IsValidUser(user.conn, &usr)
+	if nil != err {
+		return 0, err
+	}
+	return result,nil
+}
+

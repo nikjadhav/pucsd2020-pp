@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	configFile = "/etc/pucsd2020-pp/rest-api.cfg"
+	configFile = "/etc/pucsd2020-pp/ACL.cfg"
 )
 
 var (

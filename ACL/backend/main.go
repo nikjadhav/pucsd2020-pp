@@ -10,10 +10,10 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/config"
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/driver"
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/handler"
-	httpHandler "github.com/pucsd2020-pp/challenges/challenge2/rest-api/handler/http"
+	"github.com/pucsd2020-pp/ACL/backend/config"
+	"github.com/pucsd2020-pp/ACL/backend/driver"
+	"github.com/pucsd2020-pp/ACL/backend/handler"
+	httpHandler "github.com/pucsd2020-pp/ACL/backend/handler/http"
 )
 
 var (
@@ -31,18 +31,22 @@ func init() {
 		log.Printf("Error while creating db connectiion:%s", err.Error())
 		os.Exit(1)
 	}
-
 	handlers = []handler.IHTTPHandler{
+		httpHandler.NewGroupHandler(dbConn),
 		httpHandler.NewUserHandler(dbConn),
+		httpHandler.NewUserGroupHandler(dbConn),
+		httpHandler.NewFilesHandler(dbConn),
+		httpHandler.NewUserFilesHandler(dbConn),
+		httpHandler.NewGroupFilesHandler(dbConn),
 	}
 }
 
 func createRouterGroup(router *chi.Mux) {
 	router.Group(func(r chi.Router) {
-		fmt.Println(handlers)
 		for _, hdlr := range handlers { // register all handlers
 			for _, hlr := range hdlr.GetHTTPHandler() {
 				path := fmt.Sprintf("/webapi/v1/%s", hlr.Path)
+				fmt.Println(hlr.Path)
 				switch hlr.Method {
 				case http.MethodGet:
 					r.Get(path, hlr.Func)
@@ -61,7 +65,6 @@ func createRouterGroup(router *chi.Mux) {
 }
 
 func main() {
-	fmt.Println("Running")
 	router := chi.NewRouter()
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.Logger)

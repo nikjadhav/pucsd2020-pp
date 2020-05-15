@@ -5,23 +5,28 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	//"fmt"
 
 	"github.com/go-chi/chi"
 
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/handler"
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/model"
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/repository"
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/repository/user"
+	"github.com/pucsd2020-pp/ACL/backend/handler"
+	"github.com/pucsd2020-pp/ACL/backend/model"
+	"github.com/pucsd2020-pp/ACL/backend/repository"
+	"github.com/pucsd2020-pp/ACL/backend/repository/user"
 )
 
 type User struct {
 	handler.HTTPHandler
 	repo repository.IRepository
+	repo1 repository.JRepository
+
 }
 
 func NewUserHandler(conn *sql.DB) *User {
 	return &User{
 		repo: user.NewUserRepository(conn),
+		repo1:user.NewUserRepository(conn),
+
 	}
 }
 
@@ -32,8 +37,10 @@ func (user *User) GetHTTPHandler() []*handler.HTTPHandler {
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodPut, Path: "user/{id}", Func: user.Update},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodDelete, Path: "user/{id}", Func: user.Delete},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodGet, Path: "user", Func: user.GetAll},
+		&handler.HTTPHandler{Authenticated: true, Method: http.MethodPost, Path: "isvaliduser", Func: user.IsValidUser},
 	}
 }
+
 
 func (user *User) GetByID(w http.ResponseWriter, r *http.Request) {
 	var usr interface{}
@@ -100,7 +107,7 @@ func (user *User) Delete(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		err = user.repo.Delete(r.Context(), id)
+		_,err = user.repo.Delete(r.Context(), id)
 		if nil != err {
 			break
 		}
@@ -115,3 +122,22 @@ func (user *User) GetAll(w http.ResponseWriter, r *http.Request) {
 	usrs, err := user.repo.GetAll(r.Context())
 	handler.WriteJSONResponse(w, r, usrs, http.StatusOK, err)
 }
+
+func (user *User)IsValidUser(w http.ResponseWriter, r *http.Request) {
+
+	var usr model.Login
+	err := json.NewDecoder(r.Body).Decode(&usr)
+	var result interface {}	
+	for {
+		if nil != err {
+			break
+		}
+
+		result, err = user.repo1.IsValidUser(r.Context(), usr)
+		break
+	}
+	handler.WriteJSONResponse(w, r,result, http.StatusOK, err)
+}
+
+
+

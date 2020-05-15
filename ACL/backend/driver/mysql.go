@@ -1,5 +1,4 @@
 package driver
-
 import (
 	"bytes"
 	"database/sql"
@@ -9,9 +8,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
-
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/config"
-	"github.com/pucsd2020-pp/challenges/challenge2/rest-api/model"
+	"github.com/pucsd2020-pp/ACL/backend/config"
+	"github.com/pucsd2020-pp/ACL/backend/model"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -59,9 +57,11 @@ func GetPlaceHolder(count int) string {
  * Insert new row
  */
 func Create(conn *sql.DB, object model.IModel) (sql.Result, error) {
+	fmt.Println("OBJ",object)
 	rValue := reflect.ValueOf(object)
 	rType := reflect.TypeOf(object)
-
+	fmt.Println("rValue",rValue)
+	fmt.Println("rtype",rType)
 	columns := []string{}
 	var params []interface{}
 
@@ -69,18 +69,16 @@ func Create(conn *sql.DB, object model.IModel) (sql.Result, error) {
 	for idx := 0; idx < rValue.Elem().NumField(); idx++ {
 		field := rType.Elem().Field(idx)
 		value := rValue.Elem().Field(idx)
-
-		//if value.IsNil() || COLUMN_INGNORE_FLAG == field.Tag.Get("autoincr") ||
-	//		COLUMN_INGNORE_FLAG == field.Tag.Get("ignore") {
-	//		continue
-	//	}
-
+		/*if value.IsNil() || COLUMN_INGNORE_FLAG == field.Tag.Get("autoincr") ||
+			COLUMN_INGNORE_FLAG == field.Tag.Get("ignore") {
+			continue
+		}*/
 		column := field.Tag.Get("column")
 		columns = append(columns, column)
 		params = append(params, value.Interface())
 		count++
 	}
-
+	//fmt.Println("breakpoint param:",params,object.Table(),columns,count)
 	var queryBuffer bytes.Buffer
 	queryBuffer.WriteString("INSERT INTO ")
 	queryBuffer.WriteString(object.Table())
@@ -146,7 +144,7 @@ func UpdateById(conn *sql.DB, object model.IModel) error {
 	for _, param := range keyParams {
 		params = append(params, param)
 	}
-
+	fmt.Println("breakpoint param:",params,object.Table(),columns,keyColumns)
 	var queryBuffer bytes.Buffer
 	queryBuffer.WriteString("UPDATE ")
 	queryBuffer.WriteString(object.Table())
@@ -194,12 +192,12 @@ func GetById(conn *sql.DB, object model.IModel, id int64) (model.IModel, error) 
 	}
 
 	var queryBuffer bytes.Buffer
-
+	fmt.Println("C",columns[0])
 	queryBuffer.WriteString("SELECT ")
 	queryBuffer.WriteString(strings.Join(columns, ", "))
 	queryBuffer.WriteString(" FROM ")
 	queryBuffer.WriteString(object.Table())
-	queryBuffer.WriteString(" WHERE id = ?")
+	queryBuffer.WriteString(" WHERE "+columns[0]+" = ?")
 
 	query := queryBuffer.String()
 	//	log.Printf("GetById sql: %s\n", query)
@@ -232,12 +230,14 @@ func GetById(conn *sql.DB, object model.IModel, id int64) (model.IModel, error) 
 func GetAll(conn *sql.DB, object model.IModel, limit, offset int64) ([]interface{}, error) {
 	rValue := reflect.ValueOf(object)
 	rType := reflect.TypeOf(object)
-
+	fmt.Println("object",object)
+	fmt.Println("rValue",rValue,rType,rValue.Elem().NumField())
 	columns := []string{}
 	pointers := make([]interface{}, 0)
 
 	for idx := 0; idx < rValue.Elem().NumField(); idx++ {
 		field := rType.Elem().Field(idx)
+		fmt.Println("field",field)
 		if COLUMN_INGNORE_FLAG == field.Tag.Get("ignore") {
 			continue
 		}
@@ -245,8 +245,9 @@ func GetAll(conn *sql.DB, object model.IModel, limit, offset int64) ([]interface
 		column := field.Tag.Get("column")
 		columns = append(columns, column)
 		pointers = append(pointers, rValue.Elem().Field(idx).Addr().Interface())
+		fmt.Println("Display",rValue.Elem().Field(idx).Interface())
 	}
-
+	//fmt.Println("pointers",pointers)
 	var queryBuffer bytes.Buffer
 	var params []interface{}
 
@@ -271,30 +272,46 @@ func GetAll(conn *sql.DB, object model.IModel, limit, offset int64) ([]interface
 
 	defer row.Close()
 	objects := make([]interface{}, 0)
+	recds, err := row.Columns()
 	for row.Next() {
 		if nil != err {
 			log.Printf("Error row.Columns(): %s\n\tError Query: %s\n", err.Error(), query)
 			return nil, err
 		}
-
-		err = row.Scan(pointers...)
+		values := make([]interface{}, len(recds))
+		recdsWrite := make([]string, len(recds))
+		for index, _ := range recds {
+			values[index] = &recdsWrite[index]
+		}
+		err = row.Scan(values...)
 		if nil != err {
 			log.Printf("Error: row.Scan: %s\n", err.Error())
 			return nil, err
 		}
 
-		objects = append(objects, object)
+		objects = append(objects,values)
 	}
-
 	return objects, nil
 }
 
 func DeleteById(conn *sql.DB, object model.IModel, id int64) (sql.Result, error) {
+	rValue := reflect.ValueOf(object)
+	rType := reflect.TypeOf(object)
+	columns := []string{}
+	for idx := 0; idx < rValue.Elem().NumField(); idx++ {
+		field := rType.Elem().Field(idx)
+		fmt.Println("field",field)
+		if COLUMN_INGNORE_FLAG == field.Tag.Get("ignore") {
+			continue
+		}
+
+		column := field.Tag.Get("column")
+		columns = append(columns, column)
+	}
 	var queryBuffer bytes.Buffer
 	queryBuffer.WriteString("DELETE FROM ")
 	queryBuffer.WriteString(object.Table())
-	queryBuffer.WriteString(" WHERE id = ?")
-
+	queryBuffer.WriteString(" WHERE " + columns[0] +" = ?")
 	query := queryBuffer.String()
 	//	log.Println("Delete statement is: %s", query)
 	stmt, err := conn.Prepare(query)
@@ -313,28 +330,52 @@ func DeleteById(conn *sql.DB, object model.IModel, id int64) (sql.Result, error)
 
 	return result, err
 }
+func IsValidUser(conn *sql.DB, object model.IModel) (interface{}, error) {
+	rValue := reflect.ValueOf(object)
+	rType := reflect.TypeOf(object)
+	columns := []string{}
+	pointers := make([]interface{}, 0)
+	var params []interface{}
 
-func SoftDeleteById(conn *sql.DB, object model.IModel, id int64) error {
+	for idx := 0; idx < rValue.Elem().NumField(); idx++ {
+		field := rType.Elem().Field(idx)
+		value := rValue.Elem().Field(idx)
+		if COLUMN_INGNORE_FLAG == field.Tag.Get("ignore") {
+			continue
+		}
+
+		column := field.Tag.Get("column")
+		columns = append(columns, column)
+		pointers = append(pointers, rValue.Elem().Field(idx).Addr().Interface())
+		params = append(params, value.Interface())
+	}
 	var queryBuffer bytes.Buffer
-	queryBuffer.WriteString("UPDATE ")
+	queryBuffer.WriteString(" SELECT rtype FROM ")
 	queryBuffer.WriteString(object.Table())
-	queryBuffer.WriteString(" SET deleted = 1  WHERE id = ?")
-
+	queryBuffer.WriteString(" where id= ? and password= ? and deleted=0")
 	query := queryBuffer.String()
-	//	log.Println("Delete statement is: %s", query)
-	stmt, err := conn.Prepare(query)
-	if nil != err {
-		log.Printf("Delete Syntax Error: %s\n\tError Query: %s : %s\n",
-			err.Error(), object.String(), query)
-		return err
-	}
+	row, err := conn.Query(query, params...)
 
-	defer stmt.Close()
-	_, err = stmt.Exec(id)
 	if nil != err {
-		log.Printf("Delete Execute Error: %s\nError Query: %s : %s\n",
-			err.Error(), object.String(), query)
+		log.Printf("Error conn.Query: %s\n\tError Query: %s\n", err.Error(), query)
+		return nil, err
 	}
+	defer row.Close()
+	var res interface{}
+	if row.Next() {
+	
+		if nil != err {
+			log.Printf("Error row.Columns(): %s\n\tError Query: %s\n", err.Error(), query)
+			return nil, err
+		}
 
-	return err
+		err = row.Scan(&res)
+		if nil != err {
+			log.Printf("Error: row.Scan: %s\n", err.Error())
+			return nil, err
+		}
+	} else {
+		return nil, errors.New(fmt.Sprintf("Entry not found for id and password"))
+	}
+	return res, nil
 }

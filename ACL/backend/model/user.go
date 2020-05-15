@@ -8,6 +8,11 @@ type User struct {
 	Password      string `json:"password" column:"password"`
 	ContactNumber string `json:"contact_number" column:"contact_number"`
 	UpdatedBy     int64  `json:"updated_by" column:"updated_by"`
+	Role		  int64  `json:"role" column:"rtype"`
+}
+type Login struct {
+	Userid		  int64	 `json:"user_id" column:"id"`
+	Password	  string `json:"password" column:"password"`	
 }
 
 func (user *User) Table() string {
@@ -16,4 +21,12 @@ func (user *User) Table() string {
 
 func (user *User) String() string {
 	return Stringify(user)
+}
+
+func (login *Login) Table() string {
+	return "user_detail"
+}
+
+func (login *Login) String() string {
+	return Stringify(login)
 }

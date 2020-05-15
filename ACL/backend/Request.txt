@@ -1,0 +1,23 @@
+METHOD  URL                             JSON                                    Purpose
+
+
+POST    URL/group                       {'gname':"groupname"}                   Create New Group
+GET     URL/group                       -                                       Get All Group
+POST    URL/usergroup                   {'id':id_in_int,'gid':id_in_int}        Add User In Group
+GET     URL/usergroup/{gid}             -                                       Get All User From gid
+DELETE  URL/group/{gid}                 -                                       Delete Group
+DELETE  URL/usergroup/{id}/{gid}        -                                       Delete User From Group
+POST    URL/files                       {'fname':"","parent":,"ftype":          Create New File Or Dir
+                                                1 for file and 2 for dir}
+GET     URL/files/parent                -                                       Get Child Files and dir of pid
+DELETE  URL/files/id                    -                                       Delete Recursive files/folders
+DELETE  URL/userfiles/{id}/{fid}        -                                       Delete file/folderpermission to user
+DELETE  URL/groupfiles/{gid}/{fid}      -                                     	Delete file/folderpermission to group
+
+
+~                                                                                                                                             
+~                                                                                                                                             
+~                                                                                                                                             
+~                                                                                                                                             
+~                                                                                                                                             
+~                                                                                            

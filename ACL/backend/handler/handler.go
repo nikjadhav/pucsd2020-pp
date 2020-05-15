@@ -13,7 +13,6 @@ type IHTTPHandler interface {
 	Delete(http.ResponseWriter, *http.Request)
 	GetAll(http.ResponseWriter, *http.Request)
 }
-
 type HTTPHandler struct {
 	Authenticated bool
 	Method        string
