@@ -1,8 +1,8 @@
 package model
 
 type GroupFiles	 struct {
-	Gid           int64  `json:"gid" column:"gid"`
-	Fid		  int64  `json:"fid" column:"fid"`
+	Gid           int64  `json:"gid" key:"primary" column:"gid"`
+	Fid		  int64  `json:"fid" key:"primary" column:"fid"`
 	Ptype		  int64  `json:"ptype" column:"ptype"`
 
 }

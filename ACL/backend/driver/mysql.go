@@ -146,7 +146,7 @@ func UpdateById(conn *sql.DB, object model.IModel) error {
 	queryBuffer.WriteString(" SET ")
 	queryBuffer.WriteString(strings.Join(columns, ", "))
 	queryBuffer.WriteString(" WHERE ")
-	queryBuffer.WriteString(strings.Join(keyColumns, ", "))
+	queryBuffer.WriteString(strings.Join(keyColumns, " and "))
 	queryBuffer.WriteString(";")
 
 	query := queryBuffer.String()

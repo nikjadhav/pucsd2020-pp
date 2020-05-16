@@ -30,7 +30,7 @@ func (groupfiles *GroupFiles) GetHTTPHandler() []*handler.HTTPHandler {
 	return []*handler.HTTPHandler{
 		//&handler.HTTPHandler{Authenticated: true, Method: http.MethodGet, Path: "groupfiles/{id}", Func: groupfiles.GetByID},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodPost, Path: "groupfiles", Func: groupfiles.Create},
-		//&handler.HTTPHandler{Authenticated: true, Method: http.MethodPut, Path: "groupfiles/{id}", Func: groupfiles.Update},
+		&handler.HTTPHandler{Authenticated: true, Method: http.MethodPut, Path: "groupfiles/{id}/{fid}", Func: groupfiles.Update},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodDelete, Path: "groupfiles/{gid}/{fid}", Func: groupfiles.Delete},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodGet, Path: "groupfiles", Func: groupfiles.GetAll},
 		
@@ -66,23 +66,25 @@ func (groupfiles *GroupFiles) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	handler.WriteJSONResponse(w, r, usr, http.StatusOK, err)
 }
-/*
+
 func (groupfiles *GroupFiles) Update(w http.ResponseWriter, r *http.Request) {
 	var iUsr interface{}
 	id, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	fid, _ := strconv.ParseInt(chi.URLParam(r, "fid"), 10, 64)
 	usr := model.GroupFiles{}
 	err := json.NewDecoder(r.Body).Decode(&usr)
 	for {
 		if nil != err {
 			break
 		}
-		usr.Id = id
+		usr.Gid = id
+		usr.Fid=fid
 		if nil != err {
 			break
 		}
 
 		// set logged in groupfiles id for tracking update
-		usr.UpdatedBy = 0
+		//usr.UpdatedBy = 0
 
 		iUsr, err = groupfiles.repo.Update(r.Context(), usr)
 		if nil != err {
@@ -94,7 +96,7 @@ func (groupfiles *GroupFiles) Update(w http.ResponseWriter, r *http.Request) {
 
 	handler.WriteJSONResponse(w, r, usr, http.StatusOK, err)
 }
-*/
+
 func (groupfiles *GroupFiles) Delete(w http.ResponseWriter, r *http.Request) {
 	var payload string
 	gid, err := strconv.ParseInt(chi.URLParam(r, "gid"), 10, 64)

@@ -32,7 +32,7 @@ func (userfiles *UserFiles) GetHTTPHandler() []*handler.HTTPHandler {
 	return []*handler.HTTPHandler{
 		//&handler.HTTPHandler{Authenticated: true, Method: http.MethodGet, Path: "userfiles/{id}", Func: userfiles.GetByID},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodPost, Path: "userfiles", Func: userfiles.Create},
-		//&handler.HTTPHandler{Authenticated: true, Method: http.MethodPut, Path: "userfiles/{id}", Func: userfiles.Update},
+		&handler.HTTPHandler{Authenticated: true, Method: http.MethodPut, Path: "userfiles/{id}/{fid}", Func: userfiles.Update},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodDelete, Path: "userfiles/{id}/{fid}", Func: userfiles.Delete},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodGet, Path: "userfiles", Func: userfiles.GetAll},
 		&handler.HTTPHandler{Authenticated: true, Method: http.MethodGet, Path: "userfiles/{id}/{fid}", Func: userfiles.GetByID},
@@ -72,10 +72,11 @@ func (userfiles *UserFiles) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	handler.WriteJSONResponse(w, r, usr, http.StatusOK, err)
 }
-/*
+
 func (userfiles *UserFiles) Update(w http.ResponseWriter, r *http.Request) {
 	var iUsr interface{}
 	id, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	fid, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	usr := model.UserFiles{}
 	err := json.NewDecoder(r.Body).Decode(&usr)
 	for {
@@ -83,12 +84,13 @@ func (userfiles *UserFiles) Update(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		usr.Id = id
+		usr.Fid=fid
 		if nil != err {
 			break
 		}
 
 		// set logged in userfiles id for tracking update
-		usr.UpdatedBy = 0
+		//usr.UpdatedBy = 0
 
 		iUsr, err = userfiles.repo.Update(r.Context(), usr)
 		if nil != err {
@@ -100,7 +102,7 @@ func (userfiles *UserFiles) Update(w http.ResponseWriter, r *http.Request) {
 
 	handler.WriteJSONResponse(w, r, usr, http.StatusOK, err)
 }
-*/
+
 func (userfiles *UserFiles) Delete(w http.ResponseWriter, r *http.Request) {
 	var payload string
 	//var res interface {}

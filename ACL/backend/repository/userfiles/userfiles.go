@@ -33,13 +33,12 @@ func (userfiles *userfilesRepository) Create(cntx context.Context, obj interface
 	usr.Id = id
 	return id, nil
 }
-/*
 func (userfiles *userfilesRepository) Update(cntx context.Context, obj interface{}) (interface{}, error) {
 	usr := obj.(model.UserFiles)
 	err := driver.UpdateById(userfiles.conn, &usr)
 	return obj, err
 }
-*/
+
 func (userfiles *userfilesRepository) Delete2(cntx context.Context, id int64,fid int64) (error){
 	obj := &model.UserFiles{Id: id,Fid: fid}
 	return driver.Delete2(userfiles.conn, obj, id,fid)

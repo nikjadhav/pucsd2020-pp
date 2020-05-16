@@ -15,7 +15,7 @@ type JRepository interface {
 	IsValidUser(context.Context, interface{}) (interface{}, error)
 }
 type UGRepository interface{
-	AddUserGroup(context.Context, interface{}) ( error)
+	AddUserGroup(context.Context, interface{}) (error)
 	GetUsersByGroup(context.Context,int64) ([]interface{}, error)
 	Delete2(context.Context, int64,int64) error
 }
@@ -29,6 +29,7 @@ type UFRepository interface {
 	Create(context.Context, interface{}) (interface{}, error)
 	GetAll(context.Context) ([]interface{}, error)
 	Delete2(context.Context, int64,int64) error
+	Update(context.Context, interface{}) (interface{}, error)
 
 }
 type ARepository interface{

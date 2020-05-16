@@ -31,13 +31,13 @@ func (groupfiles *groupfilesRepository) Create(cntx context.Context, obj interfa
 	id, _ := result.LastInsertId()
 	return id, nil
 }
-/*
+
 func (groupfiles *groupfilesRepository) Update(cntx context.Context, obj interface{}) (interface{}, error) {
 	usr := obj.(model.GroupFiles)
 	err := driver.UpdateById(groupfiles.conn, &usr)
 	return obj, err
 }
-*/
+
 func (groupfiles *groupfilesRepository) Delete2(cntx context.Context, gid int64,fid int64) (error){
 	obj := &model.GroupFiles{Gid: gid,Fid: fid}
 	return driver.Delete2(groupfiles.conn, obj,gid,fid)
