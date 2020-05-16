@@ -57,11 +57,8 @@ func GetPlaceHolder(count int) string {
  * Insert new row
  */
 func Create(conn *sql.DB, object model.IModel) (sql.Result, error) {
-	fmt.Println("OBJ",object)
 	rValue := reflect.ValueOf(object)
 	rType := reflect.TypeOf(object)
-	fmt.Println("rValue",rValue)
-	fmt.Println("rtype",rType)
 	columns := []string{}
 	var params []interface{}
 
@@ -78,7 +75,6 @@ func Create(conn *sql.DB, object model.IModel) (sql.Result, error) {
 		params = append(params, value.Interface())
 		count++
 	}
-	//fmt.Println("breakpoint param:",params,object.Table(),columns,count)
 	var queryBuffer bytes.Buffer
 	queryBuffer.WriteString("INSERT INTO ")
 	queryBuffer.WriteString(object.Table())
@@ -144,7 +140,6 @@ func UpdateById(conn *sql.DB, object model.IModel) error {
 	for _, param := range keyParams {
 		params = append(params, param)
 	}
-	fmt.Println("breakpoint param:",params,object.Table(),columns,keyColumns)
 	var queryBuffer bytes.Buffer
 	queryBuffer.WriteString("UPDATE ")
 	queryBuffer.WriteString(object.Table())
@@ -192,7 +187,6 @@ func GetById(conn *sql.DB, object model.IModel, id int64) (model.IModel, error) 
 	}
 
 	var queryBuffer bytes.Buffer
-	fmt.Println("C",columns[0])
 	queryBuffer.WriteString("SELECT ")
 	queryBuffer.WriteString(strings.Join(columns, ", "))
 	queryBuffer.WriteString(" FROM ")
@@ -230,14 +224,11 @@ func GetById(conn *sql.DB, object model.IModel, id int64) (model.IModel, error) 
 func GetAll(conn *sql.DB, object model.IModel, limit, offset int64) ([]interface{}, error) {
 	rValue := reflect.ValueOf(object)
 	rType := reflect.TypeOf(object)
-	fmt.Println("object",object)
-	fmt.Println("rValue",rValue,rType,rValue.Elem().NumField())
 	columns := []string{}
 	pointers := make([]interface{}, 0)
 
 	for idx := 0; idx < rValue.Elem().NumField(); idx++ {
 		field := rType.Elem().Field(idx)
-		fmt.Println("field",field)
 		if COLUMN_INGNORE_FLAG == field.Tag.Get("ignore") {
 			continue
 		}
@@ -245,9 +236,7 @@ func GetAll(conn *sql.DB, object model.IModel, limit, offset int64) ([]interface
 		column := field.Tag.Get("column")
 		columns = append(columns, column)
 		pointers = append(pointers, rValue.Elem().Field(idx).Addr().Interface())
-		fmt.Println("Display",rValue.Elem().Field(idx).Interface())
 	}
-	//fmt.Println("pointers",pointers)
 	var queryBuffer bytes.Buffer
 	var params []interface{}
 
@@ -300,7 +289,6 @@ func DeleteById(conn *sql.DB, object model.IModel, id int64) (sql.Result, error)
 	columns := []string{}
 	for idx := 0; idx < rValue.Elem().NumField(); idx++ {
 		field := rType.Elem().Field(idx)
-		fmt.Println("field",field)
 		if COLUMN_INGNORE_FLAG == field.Tag.Get("ignore") {
 			continue
 		}

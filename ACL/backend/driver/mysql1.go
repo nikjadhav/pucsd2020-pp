@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
 	"reflect"
 	"strings"
 	"github.com/pucsd2020-pp/ACL/backend/model"
@@ -214,24 +215,29 @@ func GetPath(conn *sql.DB,fid int64) (string,error){
 func RemoveFile(path string){
 	err := os.RemoveAll("/"+path)
     if err != nil {
-        fmt.Println(err)
+        fmt.Println(err);
         return
     }
        fmt.Println("File /"+path+ " successfully deleted")
 }
 func IsAccess(conn *sql.DB, object model.IModel, id int64,fid int64) (int64,error){
 	var queryBuffer bytes.Buffer
+	var _id,_fid string
+	_id=strconv.FormatInt(id, 10)
+	_fid=strconv.FormatInt(fid, 10)
+	fmt.Println("int to string",_id,_fid)
 	queryBuffer.WriteString("select  case  when count(*)>0 ")
 	queryBuffer.WriteString("then 1 else 0 end as access from ")
-	queryBuffer.WriteString("(select gid from usergroup  where id=? and gid in(select gid from ")
-	queryBuffer.WriteString("groupfilesystem  where fid=? and ptype=2)) as s ")
+	queryBuffer.WriteString("(select gid from usergroup  where id="+_id+" and gid in(select gid from ")
+	queryBuffer.WriteString("groupfilesystem  where fid="+_fid+" and ptype=2)) as s ")
 	queryBuffer.WriteString("union select  case  when count(*)>0 then 1 else 0  end as res ")
-	queryBuffer.WriteString("from userfilesystem where id=? ")
-	queryBuffer.WriteString("and fid=? and ptype=2 ")
-	queryBuffer.WriteString("union select case when count(*)>0 then 1 else 0 end as own from filesystem where owner=? and fid=? ")
-
+	queryBuffer.WriteString("from userfilesystem where id="+_id+" ")
+	queryBuffer.WriteString("and fid="+_fid+" and ptype=2 ")
+	queryBuffer.WriteString("union select case when count(*)>0 then 1 else 0 end as own from filesystem where owner="+_id+" and fid="+_fid+" ")
+	queryBuffer.WriteString("union select case when count(*)>0 then 1 else 0 end as admin from user_detail where id="+_id+" and rtype=1")
 	query := queryBuffer.String()
-	row, err := conn.Query(query,id,fid,id,fid,id,fid)
+	fmt.Println("q",query)
+	row, err := conn.Query(query)
 	if nil != err {
 		log.Printf("Error conn.Query: %s\n\tError Query: %s\n", err.Error(), query)
 		return 0, err
