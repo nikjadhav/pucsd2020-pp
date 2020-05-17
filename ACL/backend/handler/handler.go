@@ -3,7 +3,12 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"github.com/gorilla/sessions"
+	"fmt"
+	"os"
+	"errors"
 )
+var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 type IHTTPHandler interface {
 	GetHTTPHandler() []*HTTPHandler
@@ -70,3 +75,47 @@ func WriteJSONResponse(w http.ResponseWriter,
 	w.Write(response)
 	return
 }
+func SetSession(w http.ResponseWriter,
+	r *http.Request,id int64){
+	session, err := store.Get(r, "session-name")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	session.Values["session"] = id
+	fmt.Println("sess",session.Values["session"])
+	err = session.Save(r, w)
+	fmt.Println("session saving issue",err)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+}
+func GetSession(w http.ResponseWriter,
+	r *http.Request,) (int,error){
+	session, err := store.Get(r, "session-name")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 0,err
+	}
+	if (session.Values["session"]!=nil){
+
+	return 1,nil
+	}
+	err = errors.New("Unauthorize Access")
+	return 0,err
+}
+
+func ClearSession(w http.ResponseWriter,
+	r *http.Request,){
+		session, err := store.Get(r,"session-name")
+		session.Options.MaxAge = -1
+		err = session.Save(r, w)
+		if err != nil {
+			fmt.Println("Failed to delete session")
+		}
+		fmt.Println("Delete Session")
+		
+	}
+	
